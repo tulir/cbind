@@ -3,6 +3,7 @@ package cbind
 import (
 	"fmt"
 	"sync"
+	"unicode"
 
 	"github.com/gdamore/tcell"
 )
@@ -30,6 +31,16 @@ func (c *Configuration) SetKey(mod tcell.ModMask, key tcell.Key, handler func(ev
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
+	// TODO Add other overlapping control keys
+	if mod&tcell.ModCtrl == 0 && key != tcell.KeyEnter {
+		for _, ctrlKey := range ctrlKeys {
+			if key == ctrlKey {
+				mod |= tcell.ModCtrl
+				break
+			}
+		}
+	}
+
 	c.handlers[fmt.Sprintf("%d-%d", mod, key)] = handler
 }
 
@@ -44,6 +55,14 @@ func (c *Configuration) SetRune(mod tcell.ModMask, ch rune, handler func(ev *tce
 	case '\n':
 		c.SetKey(mod, tcell.KeyEnter, handler)
 		return
+	}
+
+	if mod&tcell.ModCtrl != 0 {
+		k, ok := ctrlKeys[unicode.ToLower(ch)]
+		if ok {
+			c.SetKey(mod, k, handler)
+			return
+		}
 	}
 
 	c.mutex.Lock()
@@ -72,6 +91,5 @@ func (c *Configuration) Capture(ev *tcell.EventKey) *tcell.EventKey {
 	if handler != nil {
 		return handler(ev)
 	}
-
 	return ev
 }

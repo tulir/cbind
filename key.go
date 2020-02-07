@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"unicode"
 
 	"github.com/gdamore/tcell"
 )
@@ -21,6 +22,40 @@ var fullKeyNames = map[string]string{
 	"pgup":       "PageUp",
 	"pgdn":       "PageDown",
 	"esc":        "Escape",
+}
+
+var ctrlKeys = map[rune]tcell.Key{
+	' ':  tcell.KeyCtrlSpace,
+	'a':  tcell.KeyCtrlA,
+	'b':  tcell.KeyCtrlB,
+	'c':  tcell.KeyCtrlC,
+	'd':  tcell.KeyCtrlD,
+	'e':  tcell.KeyCtrlE,
+	'f':  tcell.KeyCtrlF,
+	'g':  tcell.KeyCtrlG,
+	'h':  tcell.KeyCtrlH,
+	'i':  tcell.KeyCtrlI,
+	'j':  tcell.KeyCtrlJ,
+	'k':  tcell.KeyCtrlK,
+	'l':  tcell.KeyCtrlL,
+	'm':  tcell.KeyCtrlM,
+	'n':  tcell.KeyCtrlN,
+	'o':  tcell.KeyCtrlO,
+	'p':  tcell.KeyCtrlP,
+	'q':  tcell.KeyCtrlQ,
+	'r':  tcell.KeyCtrlR,
+	's':  tcell.KeyCtrlS,
+	't':  tcell.KeyCtrlT,
+	'u':  tcell.KeyCtrlU,
+	'v':  tcell.KeyCtrlV,
+	'w':  tcell.KeyCtrlW,
+	'x':  tcell.KeyCtrlX,
+	'y':  tcell.KeyCtrlY,
+	'z':  tcell.KeyCtrlZ,
+	'\\': tcell.KeyCtrlBackslash,
+	']':  tcell.KeyCtrlRightSq,
+	'^':  tcell.KeyCtrlCarat,
+	'_':  tcell.KeyCtrlUnderscore,
 }
 
 // Decode decodes a string as a key or combination of keys.
@@ -80,8 +115,11 @@ DECODEPIECE:
 			continue
 		}
 		for k, keyName := range tcell.KeyNames {
-			if pieceLower == strings.ToLower(keyName) {
+			if pieceLower == strings.ToLower(strings.ReplaceAll(keyName, "-", "+")) {
 				key = k
+				if key < 0x80 {
+					ch = rune(k)
+				}
 				continue DECODEPIECE
 			}
 		}
@@ -95,6 +133,16 @@ DECODEPIECE:
 		ch = rune(piece[0])
 	}
 
+	if mod&tcell.ModCtrl != 0 {
+		k, ok := ctrlKeys[unicode.ToLower(ch)]
+		if ok {
+			key = k
+			if key < 0x80 {
+				ch = rune(key)
+			}
+		}
+	}
+
 	return mod, key, ch, nil
 }
 
@@ -102,6 +150,21 @@ DECODEPIECE:
 func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 	var b strings.Builder
 	var wrote bool
+
+	if mod&tcell.ModCtrl != 0 {
+		for _, ctrlKey := range ctrlKeys {
+			if key == ctrlKey {
+				mod ^= tcell.ModCtrl
+				break
+			}
+		}
+	}
+
+	if key != tcell.KeyRune {
+		if key < 0x80 {
+			ch = rune(key)
+		}
+	}
 
 	// Encode modifiers
 	if mod&tcell.ModCtrl != 0 {
@@ -130,7 +193,7 @@ func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 		wrote = true
 	}
 
-	if ch == ' ' {
+	if key == tcell.KeyRune && ch == ' ' {
 		if wrote {
 			b.WriteRune('+')
 		}
@@ -141,6 +204,7 @@ func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 		if keyName == "" {
 			return "", fmt.Errorf("invalid or unknown key: %d", key)
 		}
+		keyName = strings.ReplaceAll(keyName, "-", "+")
 		fullKeyName := fullKeyNames[strings.ToLower(keyName)]
 		if fullKeyName != "" {
 			keyName = fullKeyName

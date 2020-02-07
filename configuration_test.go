@@ -48,8 +48,20 @@ func TestConfiguration(t *testing.T) {
 
 	go func() {
 		for j := 0; j < pressTimes; j++ {
-			for _, c := range testCases {
-				config.Capture(tcell.NewEventKey(c.key, c.ch, c.mod))
+			for i, c := range testCases {
+				k := tcell.NewEventKey(c.key, c.ch, c.mod)
+				if k.Key() != c.key {
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey key: expected %d, got %d", c.key, k.Key())
+				} else if k.Rune() != c.ch {
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey rune: expected %d, got %d", c.ch, k.Rune())
+				} else if k.Modifiers() != c.mod {
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey modifiers: expected %d, got %d", c.mod, k.Modifiers())
+				}
+
+				ev := config.Capture(tcell.NewEventKey(c.key, c.ch, c.mod))
+				if ev != nil {
+					t.Fatalf("failed to test capturing keybinds: failed to register case %d event %d %d %d", i, c.mod, c.key, c.ch)
+				}
 			}
 		}
 	}()
@@ -68,13 +80,13 @@ func ExampleNewConfiguration() {
 	// Create a new input configuration to store the keybinds.
 	c := NewConfiguration()
 
-	// Set keybind Alt+S.
+	// Set keybind Alt+s.
 	c.SetRune(tcell.ModAlt, 's', func(ev *tcell.EventKey) *tcell.EventKey {
 		// Save
 		return nil
 	})
 
-	// Set keybind Alt+O.
+	// Set keybind Alt+o.
 	c.SetRune(tcell.ModAlt, 'o', func(ev *tcell.EventKey) *tcell.EventKey {
 		// Open
 		return nil
