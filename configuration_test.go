@@ -51,11 +51,11 @@ func TestConfiguration(t *testing.T) {
 			for i, c := range testCases {
 				k := tcell.NewEventKey(c.key, c.ch, c.mod)
 				if k.Key() != c.key {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey key: expected %d, got %d", c.key, k.Key())
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Key: expected %d, got %d", c.key, k.Key())
 				} else if k.Rune() != c.ch {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey rune: expected %d, got %d", c.ch, k.Rune())
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Rune: expected %d, got %d", c.ch, k.Rune())
 				} else if k.Modifiers() != c.mod {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey modifiers: expected %d, got %d", c.mod, k.Modifiers())
+					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Modifiers: expected %d, got %d", c.mod, k.Modifiers())
 				}
 
 				ev := config.Capture(tcell.NewEventKey(c.key, c.ch, c.mod))

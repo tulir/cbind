@@ -31,8 +31,12 @@ func (c *Configuration) SetKey(mod tcell.ModMask, key tcell.Key, handler func(ev
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	// TODO Add other overlapping control keys
-	if mod&tcell.ModCtrl == 0 && key != tcell.KeyEnter {
+	if mod&tcell.ModShift != 0 && key == tcell.KeyTab {
+		mod ^= tcell.ModShift
+		key = tcell.KeyBacktab
+	}
+
+	if mod&tcell.ModCtrl == 0 && key != tcell.KeyBackspace && key != tcell.KeyTab && key != tcell.KeyEnter {
 		for _, ctrlKey := range ctrlKeys {
 			if key == ctrlKey {
 				mod |= tcell.ModCtrl

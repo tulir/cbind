@@ -11,4 +11,4 @@ Documentation is available via [gdooc](https://docs.rocketnine.space/gitlab.com/
 
 ## Support
 
-Please share issues/suggestions [here](https://gitlab.com/tslocum/cbind/issues).
+Please share issues and suggestions [here](https://gitlab.com/tslocum/cbind/issues).

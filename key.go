@@ -152,10 +152,14 @@ func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 	var wrote bool
 
 	if mod&tcell.ModCtrl != 0 {
-		for _, ctrlKey := range ctrlKeys {
-			if key == ctrlKey {
-				mod ^= tcell.ModCtrl
-				break
+		if key == tcell.KeyBackspace || key == tcell.KeyTab || key == tcell.KeyEnter {
+			mod ^= tcell.ModCtrl
+		} else {
+			for _, ctrlKey := range ctrlKeys {
+				if key == ctrlKey {
+					mod ^= tcell.ModCtrl
+					break
+				}
 			}
 		}
 	}
