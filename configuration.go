@@ -97,3 +97,11 @@ func (c *Configuration) Capture(ev *tcell.EventKey) *tcell.EventKey {
 	}
 	return ev
 }
+
+// Clear removes all handlers.
+func (c *Configuration) Clear() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	c.handlers = make(map[string]eventHandler)
+}
