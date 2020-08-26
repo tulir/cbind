@@ -3,7 +3,7 @@ package cbind
 import (
 	"testing"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 )
 
 type testCase struct {
