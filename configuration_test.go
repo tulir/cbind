@@ -98,6 +98,8 @@ func ExampleNewConfiguration() {
 		return nil
 	})
 
-	// Before calling Application.Run, call Application.SetInputCapture:
+	// Capture input. This will differ based on the framework in use (if any).
+	// When using tview or cview, call Application.SetInputCapture before calling
+	// Application.Run.
 	// app.SetInputCapture(c.Capture)
 }

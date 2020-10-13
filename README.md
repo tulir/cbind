@@ -5,9 +5,45 @@
 
 Key event handling library for tcell
 
+## Usage
+
+```go
+// Create a new input configuration to store the keybinds.
+c := cbind.NewConfiguration()
+
+// Set keybind Alt+s.
+c.SetRune(tcell.ModAlt, 's', func(ev *tcell.EventKey) *tcell.EventKey {
+    // Save
+    return nil
+})
+
+// Set keybind Alt+o.
+c.SetRune(tcell.ModAlt, 'o', func(ev *tcell.EventKey) *tcell.EventKey {
+    // Open
+    return nil
+})
+
+// Set keybind Escape.
+c.SetKey(tcell.ModNone, tcell.KeyEscape, func(ev *tcell.EventKey) *tcell.EventKey {
+    // Exit
+    return nil
+})
+
+// Capture input. This will differ based on the framework in use (if any).
+// When using tview or cview, call Application.SetInputCapture before calling
+// Application.Run.
+app.SetInputCapture(c.Capture)
+```
+
 ## Documentation
 
 Documentation is available via [gdooc](https://docs.rocketnine.space/gitlab.com/tslocum/cbind).
+
+You may use `whichkeybind` to determine and validate key combinations.
+
+```bash
+go get gitlab.com/tslocum/cbind/whichkeybind
+```
 
 ## Support
 
