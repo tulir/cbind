@@ -5,6 +5,11 @@
 
 Key event handling library for tcell
 
+## Features
+
+- Set `KeyEvent` handlers
+- Encode and decode `KeyEvent`s as human-readable strings
+
 ## Usage
 
 ```go
@@ -47,7 +52,7 @@ app.SetInputCapture(c.Capture)
 
 Documentation is available via [gdooc](https://docs.rocketnine.space/gitlab.com/tslocum/cbind).
 
-You may use `whichkeybind` to determine and validate key combinations.
+The utility program `whichkeybind` may be used to determine and validate key combinations.
 
 ```bash
 go get gitlab.com/tslocum/cbind/whichkeybind
