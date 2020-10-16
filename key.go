@@ -2,7 +2,6 @@ package cbind
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"unicode"
 
@@ -16,6 +15,9 @@ const (
 	LabelMeta  = "meta"
 	LabelShift = "shift"
 )
+
+// ErrInvalidKeyEvent is the error returned when encoding or decoding a key event fails.
+var ErrInvalidKeyEvent = errors.New("invalid key event")
 
 var fullKeyNames = map[string]string{
 	"backspace2": "Backspace",
@@ -61,7 +63,7 @@ var ctrlKeys = map[rune]tcell.Key{
 // Decode decodes a string as a key or combination of keys.
 func Decode(s string) (mod tcell.ModMask, key tcell.Key, ch rune, err error) {
 	if len(s) == 0 {
-		return 0, 0, 0, errors.New("empty string")
+		return 0, 0, 0, ErrInvalidKeyEvent
 	}
 
 	// Special case for plus rune decoding
@@ -72,7 +74,7 @@ func Decode(s string) (mod tcell.ModMask, key tcell.Key, ch rune, err error) {
 		if len(s) == 1 {
 			return mod, key, ch, nil
 		} else if len(s) == 2 {
-			return 0, 0, 0, fmt.Errorf("invalid key %s", s)
+			return 0, 0, 0, ErrInvalidKeyEvent
 		} else {
 			s = s[:len(s)-2]
 		}
@@ -126,7 +128,7 @@ DECODEPIECE:
 
 		// Decode rune
 		if len(piece) > 1 {
-			return 0, 0, 0, fmt.Errorf("unknown key name or invalid rune: %s", piece)
+			return 0, 0, 0, ErrInvalidKeyEvent
 		}
 
 		key = tcell.KeyRune
@@ -206,7 +208,7 @@ func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 		// Encode key
 		keyName := tcell.KeyNames[key]
 		if keyName == "" {
-			return "", fmt.Errorf("invalid or unknown key: %d", key)
+			return "", ErrInvalidKeyEvent
 		}
 		keyName = strings.ReplaceAll(keyName, "-", "+")
 		fullKeyName := fullKeyNames[strings.ToLower(keyName)]

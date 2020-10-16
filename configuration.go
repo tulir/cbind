@@ -26,6 +26,21 @@ func NewConfiguration() *Configuration {
 	return &c
 }
 
+// Set sets the handler for a key event string.
+func (c *Configuration) Set(s string, handler func(ev *tcell.EventKey) *tcell.EventKey) error {
+	mod, key, ch, err := Decode(s)
+	if err != nil {
+		return err
+	}
+
+	if key == tcell.KeyRune {
+		c.SetRune(mod, ch, handler)
+	} else {
+		c.SetKey(mod, key, handler)
+	}
+	return nil
+}
+
 // SetKey sets the handler for a key.
 func (c *Configuration) SetKey(mod tcell.ModMask, key tcell.Key, handler func(ev *tcell.EventKey) *tcell.EventKey) {
 	c.mutex.Lock()
