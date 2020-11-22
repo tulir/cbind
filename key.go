@@ -16,6 +16,11 @@ const (
 	LabelShift = "shift"
 )
 
+// UnifyEnterKeys is a flag that determines whether or not KPEnter (keypad
+// enter) key events are interpreted as Enter key events. When enabled, Ctrl+J
+// key events are also interpreted as Enter key events.
+var UnifyEnterKeys = true
+
 // ErrInvalidKeyEvent is the error returned when encoding or decoding a key event fails.
 var ErrInvalidKeyEvent = errors.New("invalid key event")
 
@@ -139,7 +144,9 @@ DECODEPIECE:
 		k, ok := ctrlKeys[unicode.ToLower(ch)]
 		if ok {
 			key = k
-			if key < 0x80 {
+			if UnifyEnterKeys && key == ctrlKeys['j'] {
+				key = tcell.KeyEnter
+			} else if key < 0x80 {
 				ch = rune(key)
 			}
 		}
@@ -167,7 +174,9 @@ func Encode(mod tcell.ModMask, key tcell.Key, ch rune) (string, error) {
 	}
 
 	if key != tcell.KeyRune {
-		if key < 0x80 {
+		if UnifyEnterKeys && key == ctrlKeys['j'] {
+			key = tcell.KeyEnter
+		} else if key < 0x80 {
 			ch = rune(key)
 		}
 	}
