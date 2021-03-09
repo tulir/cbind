@@ -112,3 +112,8 @@ func ExampleNewConfiguration() {
 	// Application.Run.
 	// app.SetInputCapture(c.Capture)
 }
+
+// Example of capturing key events.
+func ExampleConfiguration_Capture() {
+	// See the end of the NewConfiguration example.
+}

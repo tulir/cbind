@@ -16,18 +16,18 @@ Key event handling library for tcell
 // Create a new input configuration to store the key bindings.
 c := NewConfiguration()
 
+// Define save event handler.
 handleSave := func(ev *tcell.EventKey) *tcell.EventKey {
-    // Save
     return nil
 }
 
+// Define open event handler.
 handleOpen := func(ev *tcell.EventKey) *tcell.EventKey {
-    // Open
     return nil
 }
 
+// Define exit event handler.
 handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
-    // Exit
     return nil
 }
 
@@ -52,7 +52,7 @@ app.SetInputCapture(c.Capture)
 
 Documentation is available via [gdooc](https://docs.rocketnine.space/gitlab.com/tslocum/cbind).
 
-The utility program `whichkeybind` may be used to determine and validate key combinations.
+The utility program `whichkeybind` is available to determine and validate key combinations.
 
 ```bash
 go get gitlab.com/tslocum/cbind/whichkeybind
