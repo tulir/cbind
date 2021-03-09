@@ -1,6 +1,7 @@
 package cbind
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"testing"
@@ -47,32 +48,37 @@ func TestConfiguration(t *testing.T) {
 		done <- struct{}{}
 	}()
 
-	go func() {
-		for j := 0; j < pressTimes; j++ {
-			for i, c := range testCases {
+	errs := make(chan error)
+	for j := 0; j < pressTimes; j++ {
+		for i, c := range testCases {
+			i, c := i, c // Capture
+			go func() {
 				k := tcell.NewEventKey(c.key, c.ch, c.mod)
 				if k.Key() != c.key {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Key: expected %d, got %d", c.key, k.Key())
+					errs <- fmt.Errorf("failed to test capturing keybinds: tcell modified EventKey.Key: expected %d, got %d", c.key, k.Key())
+					return
 				} else if k.Rune() != c.ch {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Rune: expected %d, got %d", c.ch, k.Rune())
+					errs <- fmt.Errorf("failed to test capturing keybinds: tcell modified EventKey.Rune: expected %d, got %d", c.ch, k.Rune())
+					return
 				} else if k.Modifiers() != c.mod {
-					t.Fatalf("failed to test capturing keybinds: tcell modified EventKey.Modifiers: expected %d, got %d", c.mod, k.Modifiers())
+					errs <- fmt.Errorf("failed to test capturing keybinds: tcell modified EventKey.Modifiers: expected %d, got %d", c.mod, k.Modifiers())
+					return
 				}
 
 				ev := config.Capture(tcell.NewEventKey(c.key, c.ch, c.mod))
 				if ev != nil {
-					t.Fatalf("failed to test capturing keybinds: failed to register case %d event %d %d %d", i, c.mod, c.key, c.ch)
+					errs <- fmt.Errorf("failed to test capturing keybinds: failed to register case %d event %d %d %d", i, c.mod, c.key, c.ch)
 				}
-			}
+			}()
 		}
-	}()
+	}
 
 	select {
+	case err := <-errs:
+		t.Fatal(err)
 	case <-timeout:
-		t.Error("timeout")
+		t.Fatal("timeout")
 	case <-done:
-		// Wait at least one second to catch problems before exiting.
-		<-time.After(1 * time.Second)
 	}
 }
 
