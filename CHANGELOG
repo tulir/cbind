@@ -1,3 +1,6 @@
+0.1.5:
+- Update docs
+
 0.1.4:
 - Add UnifyEnterKeys option to interpret KPEnter as Enter (enabled by default)
 

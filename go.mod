@@ -1,4 +1,4 @@
-module gitlab.com/tslocum/cbind
+module code.rocketnine.space/tslocum/cbind
 
 go 1.15
 

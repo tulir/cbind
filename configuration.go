@@ -10,7 +10,7 @@ import (
 
 type eventHandler func(ev *tcell.EventKey) *tcell.EventKey
 
-// Configuration processes key events by mapping keys to event handlers.
+// Configuration maps keys to event handlers and processes key events.
 type Configuration struct {
 	handlers map[string]eventHandler
 	mutex    *sync.RWMutex
