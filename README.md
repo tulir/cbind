@@ -1,10 +1,3 @@
-!!! cbind has moved to [code.rocketnine.space](https://code.rocketnine.space/tslocum/cbind) !!!
-====
-
-Please visit https://code.rocketnine.space/tslocum/cbind
-
-------------
-
 # cbind
 [![GoDoc](https://code.rocketnine.space/tslocum/godoc-static/raw/branch/master/badge.svg)](https://docs.rocketnine.space/code.rocketnine.space/tslocum/cbind)
 [![Donate](https://img.shields.io/liberapay/receives/rocketnine.space.svg?logo=liberapay)](https://liberapay.com/rocketnine.space)
