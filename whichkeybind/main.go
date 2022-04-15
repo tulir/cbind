@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gdamore/tcell/v2"
-	"code.rocketnine.space/tslocum/cbind"
+	"go.mau.fi/cbind"
+	"go.mau.fi/tcell"
 )
 
 func main() {

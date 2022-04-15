@@ -5,7 +5,7 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/gdamore/tcell/v2"
+	"go.mau.fi/tcell"
 )
 
 type eventHandler func(ev *tcell.EventKey) *tcell.EventKey
